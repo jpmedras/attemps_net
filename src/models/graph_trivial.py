@@ -10,10 +10,11 @@ class GraphTrivial(GraphABC):
             question_node = question_prefix+str(s.question)
 
             g.add_node(student_node, shape='circle')
-            g.add_node(question_node, shape='box', style='filled', fillcolor='red')
+            g.add_node(question_node, shape='box', fontcolor='white', style='filled', fillcolor='black')
 
             g.add_edge(student_node,
                        question_node,
+                       color='green' if s.result else 'red',
                        sign='+' if s.result else '-',
                        time=s.time,
                        label=f'{str(s.result)}, {s.time}')
