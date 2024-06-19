@@ -9,8 +9,8 @@ class GraphTrivial(GraphABC):
             student_node = student_prefix+str(s.student)
             question_node = question_prefix+str(s.question)
 
-            g.add_node(student_node, shape='circle')
-            g.add_node(question_node, shape='box', fontcolor='white', style='filled', fillcolor='black')
+            g.add_node(student_node, **self._student_node_args)
+            g.add_node(question_node, **self._question_node_args)
 
             g.add_edge(student_node,
                        question_node,
