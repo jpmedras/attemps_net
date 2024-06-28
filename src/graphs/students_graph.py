@@ -1,78 +1,96 @@
 from graphs.graph_abc import GraphABC
-from networkx import Graph
+from networkx import Graph, DiGraph
+from typing import List, Dict, Set
+from typing import Any
+from submissions.submission import Submission
+import numpy as np
 
 class StudentsGraph(GraphABC):
-    def _student_questions(self):
-        student_questions = {}
+    def __init__(self, submissions:List[Submission]=None, k:float=None) -> None:
+        super().__init__(submissions)
+        
+        self._neighbors = self._student_neighbors()
+
+        self._overlap_graph = DiGraph()
+        self._add_nodes()
+        self._add_edges()
+        
+        overlaps = self.overlap_dist()
+        median = np.median(overlaps)
+
+        self._filter(median)
+
+    @classmethod
+    def from_json(cls, json_file:str, k:float=None) -> 'StudentsGraph':
+        submissions = super().from_json(json_file)._submissions
+
+        return cls(submissions=submissions, k=k)
+
+
+    def _student_neighbors(self) -> Dict[Any, Set[Any]]:
+        neighbors = {}
 
         for s in self._submissions:
-            if s.student not in student_questions:
-                student_questions[s.student] = set()
+            if s.student not in neighbors:
+                neighbors[s.student] = set()
             
             if s.result:
-                student_questions[s.student].add(s.question)
+                neighbors[s.student].add(s.question)
 
-        return student_questions
+        return neighbors
     
-    def _commom_questions(self, student_questions):
-        commom = {}
+    @property
+    def neighbors(self) -> Dict[Any, Set[Any]]:
+        return self._neighbors
 
-        for student_u, questions_u in student_questions.items():
-            for student_v, questions_v in student_questions.items():
-                if student_u not in commom:
-                    commom[student_u] = {}
-
-                commom[student_u][student_v] = len(questions_u & questions_v)
-
-        return commom
+    def _add_nodes(self) -> None:
+        for student_u in self._neighbors:
+            if not self._overlap_graph.has_node(student_u):
+                self._overlap_graph.add_node(student_u, size=len(self._neighbors[student_u]))
     
-    def _student_selections(self, commom_questions, k=0.5):
+    def _add_edges(self):
+        for u, neighbors_u in self._neighbors.items():
+            for v, neighbors_v in self._neighbors.items():
 
-        selections = {}
+                if u == v:
+                    continue
 
-        for student_u, students in commom_questions.items():
-            student_keys = list(students.keys())
-            student_keys.remove(student_u)
+                if len(neighbors_u) > 0:
+                    overlap = len(neighbors_u & neighbors_v) / len(neighbors_u)
 
-            n_questions = students[student_u]
+                    if overlap > 0:
+                        self._overlap_graph.add_edge(u, v, weight=overlap)
+                        # self._overlap_graph[u][v].update({'weight': overlap})
 
-            selected = []
+    def _filter(self, k:float) -> None:
+        graph = DiGraph()
 
-            if n_questions > 0:
-                for key in student_keys:
-                    if (students[key] / n_questions) >= k:
-                        selected.append(key)
+        for u, v, data in self._overlap_graph.edges(data=True):
+            if data['weight'] >= k:
+                graph.add_edge(u, v, **data)
 
-            selections[student_u] = selected
-
-        return selections
-    
-    def _filtered_selecions(self, student_selections):
-        filtered_selections = {}
-        for student_u, selections in student_selections.items():
-            filtered = [student_v for student_v in selections if student_u in student_selections[student_v]]
-            filtered_selections[student_u] = filtered
-
-        return filtered_selections
+        self._overlap_graph = graph
 
     def to_graph(self) -> Graph:
-        G = Graph()
+        graph = Graph()
 
-        student_questions = self._student_questions()
-        commom = self._commom_questions(student_questions)
-        # selections = self._student_selections(commom, k=0.8)
-        # filtered = self._filtered_selecions(selections)
+        for u in self._neighbors:
+            graph.add_node(u, size=len(self._neighbors[u]))
 
-        for u, selections in commom.items():
-            for v in selections:
-                if not G.has_node(u):
-                    G.add_node(u, size=len(student_questions[u]))
+        for u in self._overlap_graph:
+            for v in self._overlap_graph:
 
-                if not G.has_node(v):
-                    G.add_node(v, size=len(student_questions[v]))
+                if u == v:
+                    continue
 
-                if not (G.has_edge(u, v) or G.has_edge(v, u)):
-                    if commom[u][v] > 0:
-                        G.add_edge(u, v, weight=commom[u][v])
+                if self._overlap_graph.has_edge(u, v) and self._overlap_graph.has_edge(v, u):
+                    graph.add_edge(u, v, weight=len(self._neighbors[u] & self._neighbors[v]))
 
-        return G
+        return graph
+    
+    def overlap_dist(self) -> List[float]:
+        overlaps = []
+        for _, _, data in self._overlap_graph.edges(data=True):
+            overlaps.append(data['weight'])
+
+        return overlaps
