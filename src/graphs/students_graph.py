@@ -88,6 +88,9 @@ class StudentsGraph(GraphABC):
 
         return graph
     
+    def neighbor_dist(self) -> List[int]:
+        return [len(neighbors) for u, neighbors in self._neighbors.items()]
+    
     def overlap_dist(self) -> List[float]:
         overlaps = []
         for _, _, data in self._overlap_graph.edges(data=True):

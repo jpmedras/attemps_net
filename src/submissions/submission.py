@@ -7,6 +7,7 @@ class Submission:
         self._result = result == 1
         self._timestamp = timestamp
         self._time = time
+        self._spent = None
 
     @property
     def student(self) -> Any:
@@ -27,6 +28,14 @@ class Submission:
     @property
     def time(self) -> int:
         return self._time
+    
+    @property
+    def spent(self) -> int:
+        return self._spent
+    
+    @spent.setter
+    def spent(self, value:int) -> int:
+        self._spent = value
     
     def __repr__(self) -> str:
         return f"Submission({self.student}, {self.question}, {int(self.result)}, {self.timestamp}, {self.time})"
