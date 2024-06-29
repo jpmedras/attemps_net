@@ -16,9 +16,12 @@ class StudentsGraph(GraphABC):
         self._add_edges()
         
         overlaps = self.overlap_dist()
-        median = np.median(overlaps)
+        quantile = np.quantile(overlaps, 0.5)
 
-        self._filter(median)
+        if k is None:
+            k = quantile
+
+        self._filter(k)
 
     @classmethod
     def from_json(cls, json_file:str, k:float=None) -> 'StudentsGraph':

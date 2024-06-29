@@ -62,4 +62,4 @@ if __name__ == '__main__':
         write_gexf(G, graph_path)
 
         analysis_df = analysis(file_path, communities)
-        print(analysis_df)
+        analysis_df.to_csv(analysis_path, decimal=',')
