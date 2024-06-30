@@ -2,11 +2,11 @@ from graphs.graph_abc import GraphABC
 from networkx import Graph, DiGraph
 from typing import List, Dict, Set
 from typing import Any
-from submissions.submission import Submission
+from submissions import SubmissionList
 import numpy as np
 
 class StudentsGraph(GraphABC):
-    def __init__(self, submissions:List[Submission]=None, k:float=None) -> None:
+    def __init__(self, submissions:SubmissionList=None, k:float=None) -> None:
         super().__init__(submissions)
         
         self._neighbors = self._student_neighbors()
@@ -22,12 +22,6 @@ class StudentsGraph(GraphABC):
             k = quantile
 
         self._filter(k)
-
-    @classmethod
-    def from_json(cls, json_file:str, k:float=None) -> 'StudentsGraph':
-        submissions = super().from_json(json_file)._submissions
-
-        return cls(submissions=submissions, k=k)
 
 
     def _student_neighbors(self) -> Dict[Any, Set[Any]]:
