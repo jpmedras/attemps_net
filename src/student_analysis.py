@@ -6,7 +6,7 @@ import pandas as pd
 from analysis import StudentClass, caracterize_community
 from submissions import SubmissionList
 
-def analysis(submissions, communities):    
+def get_data_analysis(submissions, communities):    
     student_questions = submissions.student_questions()
     student_question_times = submissions.student_question_times()
     student_submission_types = submissions.student_submission_types()
@@ -57,8 +57,8 @@ if __name__ == '__main__':
 
         set_node_attributes(G, community_attr)
 
-        print(G)
+        print(f'{year}:', G)
         write_gexf(G, graph_path)
 
-        analysis_df = analysis(submissions, communities)
+        analysis_df = get_data_analysis(submissions, communities)
         analysis_df.to_csv(analysis_path, decimal=',')
