@@ -15,9 +15,10 @@ if __name__ == '__main__':
 
         submissions = SubmissionList.from_json(file_path)
         graph = MultiGraph(submissions)
+
         G = graph.to_graph()
-        # G.layout(prog='twopi')
+        
+        G.layout(prog="sfdp")
 
         G.write(graph_path)
-
-        G.draw(image_path, prog="sfdp")  # use circo to position, write PS file
+        G.draw(image_path)
