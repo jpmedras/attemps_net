@@ -47,13 +47,11 @@ class SubmissionList:
             if submission.student not in student_questions:
                 student_questions[submission.student] = set()
 
-            if submission.result:
-                if submission.question not in student_questions[submission.student]:
-                    submissions.append(submission)
-                
-                student_questions[submission.student].add(submission.question)
-            else:
+            if submission.question not in student_questions[submission.student]:
                 submissions.append(submission)
+
+            if submission.result:
+                student_questions[submission.student].add(submission.question)
 
         self._submissions = submissions
 
