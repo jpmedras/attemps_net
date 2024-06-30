@@ -101,9 +101,11 @@ class SubmissionList:
 
         self._submissions = computed_submissions
 
-    @property
-    def students(self) -> Set[Any]:
-        return set([submission.student for submission in self._submissions])
+    def get_students(self) -> Set[Any]:
+        return list(set([submission.student for submission in self._submissions]))
+    
+    def get_questions(self) -> Set[Any]:
+        return list(set([submission.question for submission in self._submissions]))
     
     def student_questions(self) -> Dict[Any, Set[Any]]:
         data = {}
