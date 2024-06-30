@@ -1,5 +1,8 @@
 from typing import List, Set, Any
+from dataclasses import make_dataclass
 import pandas as pd
+
+StudentClass = make_dataclass("Student", [("student_id", any), ("question_ids", list), ("question_times", list), ("submission_types", list)])
 
 def caracterize_community(students_data:pd.DataFrame, communities:List[Set[Any]]):
     new_df = pd.DataFrame(index=students_data.index)
