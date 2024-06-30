@@ -1,8 +1,7 @@
-from graphs.students_graph import StudentsGraph
+from graphs import StudentsGraph
 from networkx import write_gexf
 from networkx import set_node_attributes
 from networkx.algorithms.community import louvain_communities
-import matplotlib.pyplot as plt
 import pandas as pd
 from dataclasses import make_dataclass
 from analysis import caracterize_community
@@ -18,7 +17,7 @@ def analysis(file_path, communities):
     student_submission_types = submissions.student_submission_types()
 
     students = []
-    for student in submissions.students:
+    for student in submissions.get_students():
         student_obj = Student(
             student,
             student_questions[student],
