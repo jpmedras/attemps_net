@@ -2,11 +2,11 @@ from graphs.graph_abc import GraphABC
 from networkx import Graph, DiGraph
 from typing import List, Dict, Set
 from typing import Any
-from submissions import SubmissionList
+from submissions.submission import Submission
 import numpy as np
 
 class StudentsGraph(GraphABC):
-    def __init__(self, submissions:SubmissionList=None, k:float=None) -> None:
+    def __init__(self, submissions:List[Submission]=None, k:float=None) -> None:
         super().__init__(submissions)
         
         self._neighbors = self._student_neighbors()
@@ -14,14 +14,9 @@ class StudentsGraph(GraphABC):
         self._overlap_graph = DiGraph()
         self._add_nodes()
         self._add_edges()
-        
-        overlaps = self.overlap_dist()
-        quantile = np.quantile(overlaps, 0.5)
-
-        if k is None:
-            k = quantile
-
-        self._filter(k)
+    
+        if k is not None:
+            self._filter(k)
 
 
     def _student_neighbors(self) -> Dict[Any, Set[Any]]:
