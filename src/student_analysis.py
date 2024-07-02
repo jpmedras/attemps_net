@@ -4,7 +4,7 @@ from networkx import set_node_attributes
 from networkx.algorithms.community import louvain_communities, modularity
 import pandas as pd
 import numpy as np
-from analysis import StudentClass, caracterize_communities
+from analysis import StudentClass, caracterize_communities, community_questions
 from submissions import SubmissionList
 
 def get_data_analysis(submissions):    
@@ -47,6 +47,8 @@ def find_k(submissions):
 
     min_k = min(criterion, key=criterion.get)
 
+    print(criterion[0.0], criterion[min_k])
+
     return min_k
 
 if __name__ == '__main__':
@@ -75,8 +77,10 @@ if __name__ == '__main__':
     for year in YEARS:
         FILE_PATH = 'private_data/by_year/' + str(year) + '.json'
         GRAPH_PATH = OUTPUT_PATH + 'students/' + str(year) + '/' + str(year) + '.gexf'
+        GRAPH_T_PATH = OUTPUT_PATH + 'students/' + str(year) + '/' + str(year) + '_t' +'.gexf'
         SIMPLE_PATH = OUTPUT_PATH + 'students/' + str(year) + '/' + str(year) + '_simple' + '.gexf'
         ANALYSIS_PATH = OUTPUT_PATH + 'students/' + str(year) + '/' + 'analysis_' + str(year) + '.csv'
+        QUESTIONS_PATH = OUTPUT_PATH + 'students/' + str(year) + '/' + 'questions_' + str(year) + '.csv'
 
         submissions = SubmissionList.from_json(FILE_PATH)
 
@@ -92,6 +96,15 @@ if __name__ == '__main__':
         G_no_k = graph_no_k.to_graph()
         communities_no_k = louvain_communities(G_no_k, seed=42, weight='weight')
         modularity_no_k = modularity(G_no_k, communities=communities_no_k)
+
+        community_no_k_attr = {}
+        for idx, community in enumerate(communities_no_k):
+            for node in community:
+                community_no_k_attr[node] = {
+                    'community': idx
+                }
+
+        set_node_attributes(G_no_k, community_no_k_attr)
 
         k = find_k(submissions)
         print('k =', k)
@@ -114,6 +127,7 @@ if __name__ == '__main__':
         print(G_with_k)
 
         write_gexf(G_simple, SIMPLE_PATH)
+        write_gexf(G_no_k, GRAPH_T_PATH)
         write_gexf(G_with_k, GRAPH_PATH)
 
         compare_data['year'].append(year)
@@ -124,9 +138,12 @@ if __name__ == '__main__':
         compare_data['modularity_with_k'].append(f"{modularity_with_k:.2f}")
 
         student_data = get_data_analysis(submissions)
-        analysis_df = caracterize_communities(student_data, communities_with_k)
 
-        analysis_df.to_csv(ANALYSIS_PATH, decimal=',')
+        analysis_df = caracterize_communities(student_data, communities_with_k)
+        analysis_df.to_csv(ANALYSIS_PATH)
+
+        question_df = community_questions(student_data, communities_with_k)
+        question_df.to_csv(QUESTIONS_PATH)
 
         print()
 

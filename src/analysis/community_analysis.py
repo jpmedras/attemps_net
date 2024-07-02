@@ -49,14 +49,12 @@ def caracterize_communities(students_data:pd.DataFrame, communities:List[Set[Any
         'community': [],
         'n_students': [],
         'student_ids': [],
-        'mean_n_right_questions': [],
         'std_n_right_questions': [],
         'mean_n_submissions': [],
         'std_n_submissions': [],
-        'mean_n_right': [],
-        'std_n_right': [],
-        'mean_n_wrong': [],
-        'std_n_wrong': [],
+        'n_students_right': [],
+        'n_submissions_right': [],
+        'p_submissions_right': [],
         'mean_mean_question_times': [],
         'std_mean_question_times': []
     }
@@ -69,29 +67,40 @@ def caracterize_communities(students_data:pd.DataFrame, communities:List[Set[Any
         students = [student for student in group.index]
         data["student_ids"].append(students)
 
-        n_right_questions = [len(question_ids) for question_ids in group['question_ids']]
-        data["mean_n_right_questions"].append(mean(n_right_questions))
+        n_right_questions = [len(question_ids) for question_ids in group['question_ids'] if len(question_ids) > 0]
         data["std_n_right_questions"].append(std(n_right_questions))
 
         n_submissions = [len(submission_types) for submission_types in group['submission_types']]
         data["mean_n_submissions"].append(mean(n_submissions))
         data["std_n_submissions"].append(std(n_submissions))
+        
+        n_right_questions = [len(question_ids) for question_ids in group['question_ids']]
+        n_right_questions_not_zero = [n for n in n_right_questions if n > 0]
+        data["n_students_right"].append(len(n_right_questions_not_zero))
 
-        n_right = [submission_types.count(1) for submission_types in group['submission_types']]
-        data["mean_n_right"].append(mean(n_right))
-        data["std_n_right"].append(std(n_right))
+        submission_types_ = [submission_types for submission_types in group['submission_types'] if 1 in submission_types]
+        n_submissions_ = sum([len(types) for types in submission_types_])
+        n_right_submissions = sum([types.count(1) for types in submission_types_])
 
-        n_wrong = [submission_types.count(0) for submission_types in group['submission_types']]
-        data["mean_n_wrong"].append(mean(n_wrong))
-        data["std_n_wrong"].append(std(n_wrong))
+        if len(submission_types_) > 0:
+            data['n_submissions_right'].append(n_right_submissions/len(submission_types_))
+        else:
+            data['n_submissions_right'].append(None)
+        
+        if n_submissions_ > 0:
+            p_submissions_right = n_right_submissions/n_submissions_
+            data['p_submissions_right'].append(f"{(100*p_submissions_right):.2f}")
+        else:
+            data['p_submissions_right'].append(None)
 
-        if 0 in n_right_questions:
+        mean_question_times = [(mean(question_times) if len(question_times) > 0 else None) for question_times in group['question_times']]
+        mean_question_times_ = [mean_times for mean_times in mean_question_times if mean_times is not None]
+        if len(mean_question_times_) > 0:
+            data["mean_mean_question_times"].append(mean(mean_question_times_))
+            data["std_mean_question_times"].append(std(mean_question_times_))
+        else:
             data["mean_mean_question_times"].append(None)
             data["std_mean_question_times"].append(None)
-        else:
-            mean_times = [mean(question_times) for question_times in group['question_times']]
-            data["mean_mean_question_times"].append(mean(mean_times))
-            data["std_mean_question_times"].append(std(mean_times))        
 
     df = pd.DataFrame(data)
     df = df.set_index('community')

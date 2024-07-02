@@ -1,5 +1,7 @@
 digraph "" {
-	graph [bb="0,0,1100.5,853.58"];
+	graph [bb="0,0,1100.5,853.58",
+		overlape=scale
+	];
 	node [label="\N"];
 	S45	[height=0.79437,
 		pos="647.32,485.6",

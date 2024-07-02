@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
         G = graph.to_graph()
         
-        G.layout(prog="sfdp")
+        G.layout(prog="sfdp", args='-x -Goverlape=scale')
 
         G.write(graph_path)
         G.draw(image_path)
