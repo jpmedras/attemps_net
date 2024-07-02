@@ -81,16 +81,18 @@ if __name__ == '__main__':
         SIMPLE_PATH = OUTPUT_PATH + 'students/' + str(year) + '/' + str(year) + '_simple' + '.gexf'
         ANALYSIS_PATH = OUTPUT_PATH + 'students/' + str(year) + '/' + 'analysis_' + str(year) + '.csv'
         QUESTIONS_PATH = OUTPUT_PATH + 'students/' + str(year) + '/' + 'questions_' + str(year) + '.csv'
+        ANALY_SIMPLE_PATH = OUTPUT_PATH + 'students/' + str(year) + '/' + 'simple_' + str(year) + '.csv'
 
         submissions = SubmissionList.from_json(FILE_PATH)
 
         graph_simple = SimpleGraph(submissions)
-        G_simple = graph_simple.to_graph()
+        one_simple_g = graph_simple.to_graph()
+        write_gexf(one_simple_g, SIMPLE_PATH)
 
         simple_data["year"].append(year)
-        simple_data["n_students"].append(len([node for node, data in G_simple.nodes(data=True) if data['category'] == 'student']))
-        simple_data["n_questions"].append(len([node for node, data in G_simple.nodes(data=True) if data['category'] == 'question']))
-        simple_data["n_edges"].append(len(G_simple.edges))
+        simple_data["n_students"].append(len([node for node, data in one_simple_g.nodes(data=True) if data['category'] == 'student']))
+        simple_data["n_questions"].append(len([node for node, data in one_simple_g.nodes(data=True) if data['category'] == 'question']))
+        simple_data["n_edges"].append(len(one_simple_g.edges))
 
         graph_no_k = StudentsGraph(submissions)
         G_no_k = graph_no_k.to_graph()
@@ -126,7 +128,6 @@ if __name__ == '__main__':
         print(G_no_k)
         print(G_with_k)
 
-        write_gexf(G_simple, SIMPLE_PATH)
         write_gexf(G_no_k, GRAPH_T_PATH)
         write_gexf(G_with_k, GRAPH_PATH)
 
@@ -148,7 +149,7 @@ if __name__ == '__main__':
         print()
 
     df_simple = pd.DataFrame(simple_data)
-    df_simple.to_csv(SIMPLE_PATH, index=False, decimal=',')
+    df_simple.to_csv(ANALY_SIMPLE_PATH, index=False, decimal=',')
 
     df = pd.DataFrame(compare_data)
     df.to_csv(COMPARE_PATH, index=False, decimal=',')
