@@ -32,16 +32,6 @@ def community_questions(students_data:pd.DataFrame, communities:List[Set[Any]]):
 
     return df
 
-# def caracterize_students(students_data:pd.DataFrame):
-#     df = pd.DataFrame(index=students_data.index)
-#     df['n_right_questions'] = students_data['question_ids'].apply(lambda question_ids: len(question_ids))
-#     df['n_submissions'] = students_data['submission_types'].apply(lambda submission_types: len(submission_types))
-#     df['n_wrong'] = students_data['submission_types'].apply(lambda submission_types: len([submission for submission in submission_types if submission == 0]))
-#     df['n_right'] = students_data['submission_types'].apply(lambda submission_types: len([submission for submission in submission_types if submission == 1]))
-#     df['mean_question_times'] = students_data['question_times'].apply(lambda x: (sum(x) / len(x)) if len(x) > 0 else None)
-
-#     return df
-
 def caracterize_communities(students_data:pd.DataFrame, communities:List[Set[Any]]):
     grouped = group_communities(students_data, communities)
 

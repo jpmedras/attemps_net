@@ -1,151 +1,192 @@
+from collections.abc import MutableSequence
 from typing import List
 from .submission import Submission
-from _collections_abc import list_iterator
 import json
 from datetime import datetime, timedelta
-from typing import Dict, Set, Any
+from pandas import DataFrame
 
-class SubmissionList:
-    def __init__(self, submissions:List[Submission], clean=True, compute_spent=True) -> None:
-        self._submissions = submissions
+class SubmissionList(MutableSequence):
+    def __init__(self, submissions: List[Submission] = None, clean: bool = True, spent: bool = True) -> None:
+        """
+        Classe para manipular submissões, uma coleção de submissões. Ela permite limpar e computar valores úteis a partir dos dados.
 
-        self._submissions.sort()
+        Argumentos:
+        ---
+        submissions: uma `list` com elementos do tipo `Submission` (uma lista de submissões).
+        clean: define se as submissões serão "limpas". Se um estudante já resolveu um exercício, qualquer submissão nesse mesmo exercício enviada depois da primeira correta será ignorada.
+        spent: define se o tempo gasto de cada submissão será computado. O tempo gasto é considerado como a diferença entre o tempo da submissão atual e da última, dentro do mesmo dia. Caso não hajam submissões anteriores no mesmo dia, considera-se o tempo desde o início.
+        """
 
+        if submissions is None:
+            submissions = []
+
+            clean = False
+            spent = False
+        
         if clean:
-            self._clean()
+            submissions = self._clean(submissions)
 
-        if compute_spent:
-            self._compute_spent()
-
-    @classmethod
-    def from_json(cls, json_file:str) -> 'SubmissionList':
-        submissions = []
-
-        with open(json_file) as file:
-            content = json.load(file)
-
-        for s in content:
-            submission = Submission(s['id_student'], s['id_question'], s['result'], s['timestamp'], s['time'])
-            submissions.append(submission)
-
-        return cls(submissions)
-    
-    def __len__(self) -> int:
-        return len(self._submissions)
-    
-    def __iter__(self) -> list_iterator:
-        return iter(self._submissions)
-    
-    def __getitem__(self, index) -> Submission:
-        return self._submissions[index]
-    
-    def _clean(self) -> None:
-        submissions = []
-
-        student_questions = {}
-        for submission in self._submissions:
-            if submission.student not in student_questions:
-                student_questions[submission.student] = set()
-
-            if submission.question not in student_questions[submission.student]:
-                submissions.append(submission)
-
-            if submission.result:
-                student_questions[submission.student].add(submission.question)
-
-        self._submissions = submissions
-
-    def _group_submissions(self) -> Dict[Any, 'SubmissionList']:
-        grouped_ = {}
-        for submission in self._submissions:
-            if submission.student not in grouped_:
-                grouped_[submission.student] = []
+        if spent:
+            submissions = self._compute_lesson(submissions)
+            submissions = self._compute_spent_time(submissions)
             
-            grouped_[submission.student].append(submission)
+        self._submissions = sorted(submissions)
+        
+    def _clean(self, submissions) -> List[Submission]:
+        """
+        Limpa as submissões removendo aquelas que seguem a seguinte regra: caso um estudante já tenha resolvido um exercício (tenha ao menos uma submissão correta), qualquer submissão depois da primeira correta deve ser ignorada.
+        """
+        cleaned_submissions = []
 
-        grouped = {}
-        for student in grouped_:
-            grouped[student] = SubmissionList(grouped_[student], clean=False, compute_spent=False)
+        solved_exercises = {}
+        for submission in submissions:
+            if submission.student_id not in solved_exercises:
+                solved_exercises[submission.student_id] = set()
 
-        return grouped
+            if submission.exercise_id not in solved_exercises[submission.student_id]:
+                cleaned_submissions.append(submission)
+
+            if submission.correct:
+                solved_exercises[submission.student_id].add(submission.exercise_id)
+
+        return sorted(cleaned_submissions)
     
-    def _compute_spent(self) -> None:
+    def _compute_lesson(self, submissions: List[Submission], days: int = 1) -> List[Submission]:
+        """
+        Computa o dia da submissão considerando as submissões do mesmo arquivo. Considera-se como dia, uma aula ou atividade. Caso o intervalo entre as submissões no arquivo seja maior ou igual ao definido, as submissões são classificadas como de dias diferentes.
+        """
+        computed_submissions = []
+        
+        it1 = iter(submissions)
+        it2 = iter(submissions)
+        next(it2)
+        
+        lesson_id = 0
+        
+        while ((submission := next(it1, None)) is not None) and ((submission_next := next(it2, None)) is not None):
+            submission.lesson_id = lesson_id
+            computed_submissions.append(submission)
+            
+            time = datetime.fromtimestamp(submission.timestamp)
+            time_next = datetime.fromtimestamp(submission_next.timestamp)
+
+            long_time = abs(time_next - time) > timedelta(days=days)
+
+            if long_time:
+                lesson_id += 1
+                    
+        submission.lesson_id = lesson_id
+        computed_submissions.append(submission)
+                        
+        return sorted(computed_submissions)
+    
+    def _compute_spent_time(self, submissions: List[Submission]) -> List[Submission]:
+        """
+        Computa o tempo gasto para uma submissão. Para um mesmo dia, considera-se como tempo gasto, o intervalo entre uma submissão e a imediatamente anterior, se houver. Em caso de não haver submissões anteriores, considera-se o tempo gasto como o tempo desde o início.
+        """
         computed_submissions = []
 
-        grouped = self._group_submissions()
+        grouped = {}
+        for submission in submissions:
+            if submission.student_id not in grouped:
+                grouped[submission.student_id] = []
+            
+            grouped[submission.student_id].append(submission)
+
 
         for _, submissions in grouped.items():
             it1 = iter(submissions)
             it2 = iter(submissions)
 
             submission = next(it2)
-            submission.spent = submission.time
+            submission.spent_time = submission.beginning_timestamp_diff
             computed_submissions.append(submission)
 
             while ((submission_prev := next(it1, None)) is not None) and ((submission := next(it2, None)) is not None):
-                timestamp_prev = datetime.fromtimestamp(submission_prev.timestamp)
-                timestamp = datetime.fromtimestamp(submission.timestamp)
+                changed_day = (submission_prev.lesson_id < submission.lesson_id)
 
-                long_time = abs(timestamp - timestamp_prev) > timedelta(days=1)
-
-                if long_time:
-                    submission.spent = submission.time
+                if changed_day:
+                    submission.spent_time = submission.beginning_timestamp_diff
                 else:
-                    submission.spent = submission.time - submission_prev.time
+                    submission.spent_time = submission.beginning_timestamp_diff - submission_prev.beginning_timestamp_diff
 
                 computed_submissions.append(submission)
 
-        computed_submissions.sort()
+        return sorted(computed_submissions)
 
-        self._submissions = computed_submissions
+    @classmethod
+    def from_json(cls, filepath: str, student_prefix: str = None, exercise_prefix: str = None) -> None:
+        """
+        Extrai uma lista de submissões a partir de um arquivo JSON.
+        """
+        with open(filepath, 'r') as file:
+            content = json.load(file)
 
-    def get_students(self) -> Set[Any]:
-        return list(set([submission.student for submission in self._submissions]))
+        submissions = []
+        for submission_dict in content:
+
+            student_id = submission_dict['student_id']
+            if student_prefix is not None:
+                student_id = student_prefix + str(student_id)
+
+            exercise_id = submission_dict['question_id']
+            if exercise_prefix is not None:
+                exercise_id = exercise_prefix + str(exercise_id)
+
+            result = submission_dict['result']
+
+            timestamp = submission_dict['timestamp']
+
+            beginning_timestamp_diff = submission_dict['diff_from_start']
+
+            submission = Submission(
+                student_id=student_id,
+                exercise_id=exercise_id,
+                result=result,
+                timestamp=timestamp,
+                beginning_timestamp_diff=beginning_timestamp_diff
+            )
+            submissions.append(submission)
+
+        return cls(submissions)
+        
+    def __str__(self) -> str:
+        return f"{[str(submission) for submission in self._submissions]}"
+
+    def __repr__(self) -> str:
+        return f"SubmissionList({[submission for submission in self._submissions]})"
     
-    def get_questions(self) -> Set[Any]:
-        return list(set([submission.question for submission in self._submissions]))
+    def __iter__(self):
+        return iter(self._submissions)
     
-    def student_questions(self) -> Dict[Any, Set[Any]]:
-        data = {}
-
-        for submission in self._submissions:
-            if submission.student not in data:
-                data[submission.student] = set()
-
-            if submission.result:
-                data[submission.student].add(submission.question)
-
-        for student in data:
-            data[student] = list(data[student])
-
-        return data
+    def __getitem__(self, key:int) -> Submission:
+        return self._submissions[key]
     
-    def student_question_times(self) -> Dict[Any, Dict[Any, int]]:
-        data = {}
+    def __setitem__(self, key:int, elem:Submission) -> None:
+        self._submissions[key] = elem
+        
+        self._submissions = sorted(self._submissions)
 
-        grouped = self._group_submissions()
-        student_questions = self.student_questions()
+    def __delitem__(self, key:int) -> None:
+        del self._submissions[key]
+        
+    def __len__(self) -> int:
+        return len(self._submissions)
+        
+    def append(self, elem:Submission) -> None:
+        self._submissions.append(elem)
 
-        for student, submissions in grouped.items():
-            if student not in data:
-                data[student] = {}
-            
-            for question in student_questions[student]:
-                data[student][question] = 0
+    def insert(self, index:int, elem:Submission) -> None:
+        self._submissions.insert(index, elem)
+        
+        self._submissions = sorted(self._submissions)
 
-            for submission in submissions:
-                if submission.question in data[student]:
-                    data[student][submission.question] += submission.spent
-
-        return data
+    def __add__(self, other:"SubmissionList") -> "SubmissionList":
+        return SubmissionList(self._submissions + other._submissions, clean=False, spent=False)
     
-    def student_submission_types(self) -> Dict[Any, Set[int]]:
-        data = {}
+    def to_df(self):
+        d = [submission.to_series() for submission in self._submissions]
+        
+        df = DataFrame(d)
 
-        for submission in self._submissions:
-            if submission.student not in data:
-                data[submission.student] = []
-
-            data[submission.student].append(int(submission.result))
-
-        return data
+        return df
