@@ -46,7 +46,7 @@ class SubmissionList(MutableSequence):
             if submission.exercise_id not in solved_exercises[submission.student_id]:
                 cleaned_submissions.append(submission)
 
-            if submission.correct:
+            if submission.is_correct:
                 solved_exercises[submission.student_id].add(submission.exercise_id)
 
         return sorted(cleaned_submissions)

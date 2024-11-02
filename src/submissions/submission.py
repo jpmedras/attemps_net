@@ -5,15 +5,15 @@ class Submission:
     def __init__(self, student_id:Any, exercise_id:Any, result:int, timestamp:int, beginning_timestamp_diff:int) -> None:
         self._student_id = student_id
         self._exercise_id = exercise_id
-        self._correct = (result == 1)
+        self._is_correct = (result == 1)
         self._timestamp = timestamp
         self._beginning_timestamp_diff = beginning_timestamp_diff
 
     def __str__(self) -> str:
-        return f"{self.student_id}->{self.exercise_id}: {self.correct} ({self.spent_time} | {self.beginning_timestamp_diff}) [{self.lesson_id} : {self.timestamp}]"
+        return f"{self.student_id}->{self.exercise_id}: {self.is_correct} ({self.spent_time} | {self.beginning_timestamp_diff}) [{self.lesson_id} : {self.timestamp}]"
 
     def __repr__(self) -> str:
-        return f"Submission({self.student_id}, {self.exercise_id}, {int(self.correct)}, {self.timestamp}, {self.beginning_timestamp_diff})"
+        return f"Submission({self.student_id}, {self.exercise_id}, {int(self.is_correct)}, {self.timestamp}, {self.beginning_timestamp_diff})"
 
     @property
     def student_id(self) -> Any:
@@ -24,8 +24,8 @@ class Submission:
         return self._exercise_id
     
     @property
-    def correct(self) -> bool:
-        return self._correct
+    def is_correct(self) -> bool:
+        return self._is_correct
     
     @property
     def timestamp(self) -> int:
@@ -62,7 +62,7 @@ class Submission:
             'timestamp': self.timestamp,
             'student_id': self.student_id,
             'exercise_id': self.exercise_id,
-            'correct': self.correct,
+            'is_correct': self.is_correct,
             'beginning_timestamp_diff': self.beginning_timestamp_diff,
             'lesson_id': self.lesson_id
         }
