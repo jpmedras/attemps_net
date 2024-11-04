@@ -1,17 +1,6 @@
-# assignment_net
-A proposal based on data mining and social networks for visualizing students assignments.
+# Students' Characterization Based on a Network considering Solved Exercises
+A proposal based on data mining and social networks for characterizing students based on their solved exercises.
 
-```
-python3 src/trivial.py
-for y in 2018 2019 2021 2022 2023; do ./assets/png.sh trivial/$y.dot trivial/$y.png; done
-```
-
-```
-python3 src/students.py
-for y in 2018 2019 2021 2022 2023; do ./assets/png.sh students/$y.dot students/$y.png; done
-```
-
-```
-python3 src/questions.py
-for y in 2018 2019 2021 2022 2023; do ./assets/png.sh questions/$y.dot questions/$y.png; done
-```
+## Run
+python3 -m pip install -r requeriments.txt
+python3 src/students_characterization.py [csv_filename]
