@@ -1,3 +1,2 @@
-from .multigraph import MultiGraph
-from .simple_graph import SimpleGraph
-from .students_graph import StudentsGraph
+from .students__digraph import StudentsDiGraph
+from .students__graph import StudentsGraph

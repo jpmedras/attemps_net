@@ -13,7 +13,7 @@ def solved_exercises(submissions:SubmissionList) -> Dict[Any, List[int]]:
         if submission.student_id not in grouped:
             grouped[submission.student_id] = []
             
-        if submission.correct and (submission.exercise_id not in grouped[submission.student_id]):
+        if submission.is_correct and (submission.exercise_id not in grouped[submission.student_id]):
             grouped[submission.student_id].append(submission.exercise_id)
 
     return grouped

@@ -4,10 +4,10 @@ from networkx import set_node_attributes
 from networkx.algorithms.community import louvain_communities, modularity
 import pandas as pd
 import numpy as np
-from analysis import StudentClass, caracterize_communities, community_questions
+from analysis import StudentClass, caracterize_communities, community_exercises
 from submissions import SubmissionList
 
-def get_data_analysis(submissions):    
+def get_data_analysis(submissions):
     student_questions = submissions.student_questions()
     student_question_times = submissions.student_question_times()
     student_submission_types = submissions.student_submission_types()
@@ -143,7 +143,7 @@ if __name__ == '__main__':
         analysis_df = caracterize_communities(student_data, communities_with_k)
         analysis_df.to_csv(ANALYSIS_PATH)
 
-        question_df = community_questions(student_data, communities_with_k)
+        question_df = community_exercises(student_data, communities_with_k)
         question_df.to_csv(QUESTIONS_PATH)
 
         print()

@@ -1,3 +1,2 @@
-from .community_analysis import caracterize_communities, community_questions
+from .community_analysis import caracterize_communities
 from .community_analysis import StudentClass
-from .deal_comunities import group_communities

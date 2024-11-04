@@ -1,7 +1,7 @@
 from networkx import Graph
 from networkx import write_gexf
 from typing import Dict, Set, Any
-from students_digraph import StudentsDiGraph
+from .students__digraph import StudentsDiGraph
 from pandas import DataFrame
 
 from pandas import read_csv
@@ -19,8 +19,8 @@ class StudentsGraph():
         self.__add_edges()
     
     @property
-    def exercises(self) -> Dict[Any, Set[Any]]:
-        return self.__digraph.exercises
+    def solved(self) -> DataFrame:
+        return self.__digraph.solved
 
     def __add_nodes(self) -> None:
         for node, data in self.__digraph.graph.nodes(data=True):
@@ -34,7 +34,7 @@ class StudentsGraph():
                     continue
 
                 if self.__digraph.graph.has_edge(u, v) and self.__digraph.graph.has_edge(v, u):
-                    self.__graph.add_edge(u, v, weight=len(self.exercises[u] & self.exercises[v]))
+                    self.__graph.add_edge(u, v, weight=len(set(self.solved.loc[u, 'exercise_ids']) & set(self.solved.loc[v, 'exercise_ids'])))
 
     @property
     def graph(self) -> Graph:
