@@ -1,12 +1,10 @@
-from typing import List, Set, Any
 from dataclasses import make_dataclass
 from numpy import mean, std
-import pandas as pd
+from pandas import DataFrame
 
-StudentClass = make_dataclass("Student", [("student_id", any), ("exercise_ids", list), ("solving_times", list), ("results", list)])
+StudentClass = make_dataclass("Student", [("student_id", any), ("correct_exercise_ids", list), ("solving_times", list), ("attempted_exercise_ids", list), ("attemping_times", list), ("results", list)])
 
-def caracterize_communities(students_df:pd.DataFrame):
-
+def caracterize_communities(students_df:DataFrame) -> DataFrame:
     data = {
         'community': [],
         'n_students': [],
@@ -16,6 +14,10 @@ def caracterize_communities(students_df:pd.DataFrame):
         'correct_exercise_ids': [],
         'mean_ns_correct_exercises': [],
         'std_ns_correct_exercises': [],
+        'n_attempted_exercises': [],
+        'attempted_exercise_ids': [],
+        'mean_ns_attempted_exercises': [],
+        'std_ns_attempted_exercises': [],
         'n_attemps': [],
         'mean_ns_attemps': [],
         'std_ns_attemps': [],
@@ -37,18 +39,28 @@ def caracterize_communities(students_df:pd.DataFrame):
         data["student_ids"].append(student_ids)
 
         # Números (maiores que zero) de exercícios corretos para cada estudante da comunidade
-        ns_students_with_correct_exercises = [len(exercise_ids) for exercise_ids in group['exercise_ids'] if len(exercise_ids) > 0]
+        ns_students_with_correct_exercises = [len(exercise_ids) for exercise_ids in group['correct_exercise_ids'] if len(exercise_ids) > 0]
         data["n_students_with_correct_exercises"].append(len(ns_students_with_correct_exercises))
 
         # IDs dos exercícios corretos dos estudantes da comunidade
-        exercise_ids = list(set([exercise_id for exercise_ids in group['exercise_ids'] for exercise_id in exercise_ids]))
-        data["n_correct_exercises"].append(len(exercise_ids))
-        data["correct_exercise_ids"].append(exercise_ids)
+        correct_exercise_ids = list(set([exercise_id for exercise_ids in group['correct_exercise_ids'] for exercise_id in exercise_ids]))
+        data["n_correct_exercises"].append(len(correct_exercise_ids))
+        data["correct_exercise_ids"].append(correct_exercise_ids)
 
         # Números de exercícios corretos para cada estudante da comunidade
-        ns_correct_exercises = [len(exercise_ids) for exercise_ids in group['exercise_ids']]
+        ns_correct_exercises = [len(exercise_ids) for exercise_ids in group['correct_exercise_ids']]
         data["mean_ns_correct_exercises"].append(mean(ns_correct_exercises))
         data["std_ns_correct_exercises"].append(std(ns_correct_exercises))
+
+        # IDs dos exercícios tentados dos estudantes da comunidade
+        attempted_exercise_ids = list(set([exercise_id for exercise_ids in group['attempted_exercise_ids'] for exercise_id in exercise_ids]))
+        data["n_attempted_exercises"].append(len(attempted_exercise_ids))
+        data["attempted_exercise_ids"].append(attempted_exercise_ids)
+
+        # Números de exercícios tentados para cada estudante da comunidade
+        ns_attempted_exercises = [len(exercise_ids) for exercise_ids in group['attempted_exercise_ids']]
+        data["mean_ns_attempted_exercises"].append(mean(ns_attempted_exercises))
+        data["std_ns_attempted_exercises"].append(std(ns_correct_exercises))
 
         # Número de tentativas e tentivas corretas de todos os estudantes da comunidade
         ns_attemps = [len(results) for results in group['results']]
@@ -80,7 +92,7 @@ def caracterize_communities(students_df:pd.DataFrame):
             data["mean_mean_solving_times"].append(None)
             data["std_mean_solving_times"].append(None)
 
-    df = pd.DataFrame(data)
+    df = DataFrame(data)
     df = df.set_index('community')
 
     return df

@@ -1,6 +1,5 @@
 from networkx import DiGraph
 from pandas import DataFrame
-from typing import Dict, Set, Any
 
 class StudentsDiGraph():
     def __init__(self, attemps:DataFrame=None) -> None:
@@ -12,7 +11,7 @@ class StudentsDiGraph():
         self.__add_nodes()
         self.__add_edges()
 
-    def __compute_solved_exercise_ids(self):
+    def __compute_solved_exercise_ids(self) -> DataFrame:
         data = []
         for student_id, group in self.__attemps.groupby('student_id'):
             data.append(
@@ -32,7 +31,7 @@ class StudentsDiGraph():
             if not self.__graph.has_node(student_u):
                 self.__graph.add_node(student_u, size=len(solved_exercise_ids['exercise_ids']))
     
-    def __add_edges(self):
+    def __add_edges(self) -> None:
         for u, neighbors_u in self.__solved.iterrows():
             for v, neighbors_v in self.__solved.iterrows():
 
@@ -53,14 +52,14 @@ class StudentsDiGraph():
     def graph(self) -> DiGraph:
         return self.__graph
     
-    def filter(self, k:float) -> 'StudentsDiGraph':
+    def filter(self, parameter:float) -> 'StudentsDiGraph':
         graph = DiGraph()
 
         for u, data in self.graph.nodes(data=True):
             graph.add_node(u, **data)
 
         for u, v, data in self.graph.edges(data=True):
-            if data['weight'] >= k:
+            if data['weight'] >= parameter:
                 graph.add_edge(u, v, **data)
 
         self.__graph = graph

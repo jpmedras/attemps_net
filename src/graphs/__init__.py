@@ -1,2 +1,2 @@
-from .students__digraph import StudentsDiGraph
-from .students__graph import StudentsGraph
+from .students_digraph import StudentsDiGraph
+from .students_graph import StudentsGraph
