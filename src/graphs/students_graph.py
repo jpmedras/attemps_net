@@ -1,13 +1,11 @@
 from networkx import Graph
-from networkx import write_gexf
 from .students_digraph import StudentsDiGraph
 from pandas import DataFrame
-from pandas import read_csv
 
-class StudentsGraph():
-    def __init__(self, attemps:DataFrame=None, filtering_parameter:float=None) -> None:
+class StudentsGraph(StudentsDiGraph):
+    def __init__(self, data: DataFrame, filtering_parameter: float = None) -> None:
 
-        self.__digraph = StudentsDiGraph(attemps=attemps)
+        self.__digraph = StudentsDiGraph(data=data)
         
         if filtering_parameter is not None:
             self.__digraph = self.__digraph.filter(filtering_parameter)
@@ -15,6 +13,11 @@ class StudentsGraph():
         self.__graph = Graph()
         self.__add_nodes()
         self.__add_edges()
+
+    @classmethod
+    def from_attemps(cls, attemps: DataFrame, filtering_parameter: float = None) -> 'StudentsGraph':
+        digraph = StudentsDiGraph.from_attemps(attemps=attemps)
+        return cls(data=digraph.solved, filtering_parameter=filtering_parameter)
     
     @property
     def solved(self) -> DataFrame:

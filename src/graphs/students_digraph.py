@@ -2,18 +2,21 @@ from networkx import DiGraph
 from pandas import DataFrame
 
 class StudentsDiGraph():
-    def __init__(self, attemps:DataFrame=None) -> None:
+    def __init__(self, data:DataFrame) -> None:
+
+        # if data.columns != ['student_id', 'exercise_ids']:
+        #     raise Exception('')
         
-        self.__attemps = attemps
-        self.__solved = self.__compute_solved_exercise_ids()
+        self.__solved = data
 
         self.__graph = DiGraph()
         self.__add_nodes()
         self.__add_edges()
 
-    def __compute_solved_exercise_ids(self) -> DataFrame:
+    @classmethod
+    def from_attemps(cls, attemps:DataFrame) -> 'StudentsDiGraph':
         data = []
-        for student_id, group in self.__attemps.groupby('student_id'):
+        for student_id, group in attemps.groupby('student_id'):
             data.append(
                 {
                     'student_id': student_id,
@@ -24,7 +27,7 @@ class StudentsDiGraph():
         df = DataFrame(data)
         df = df.set_index('student_id')
 
-        return df
+        return cls(df)
     
     def __add_nodes(self) -> None:
         for student_u, solved_exercise_ids in self.__solved.iterrows():

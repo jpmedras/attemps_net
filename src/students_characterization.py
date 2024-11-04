@@ -83,7 +83,7 @@ def find_filtering_parameter(attemps:DataFrame) -> DataFrame:
     }
 
     for k in np.arange(0.0, 0.95, 0.05):
-        graph = StudentsGraph(attemps=attemps, filtering_parameter=k).graph
+        graph = StudentsGraph.from_attemps(attemps=attemps, filtering_parameter=k).graph
 
         communities = louvain_communities(graph, seed=42, weight='weight')
         grouped_communities = group_singleton_communities(communities)
@@ -137,7 +137,7 @@ if __name__ == '__main__':
         attemps_metrics_data['n_attemps'].append(len(attemps_df.index))
 
         # Grafo sem filtragem
-        students_graph = StudentsGraph(attemps=attemps_df).graph
+        students_graph = StudentsGraph.from_attemps(attemps=attemps_df).graph
         students_graph_communities = louvain_communities(students_graph, seed=42, weight='weight')
         students_graph_grouped_communities = group_singleton_communities(students_graph_communities)
         students_graph_modularity = modularity(students_graph, communities=students_graph_grouped_communities)
@@ -159,7 +159,7 @@ if __name__ == '__main__':
         filtering_parameter = float(filtering_parameter_df.loc[filtering_parameter_df['criterion'] == filtering_parameter_df['criterion'].min(), 'filtering_parameter'].squeeze())
 
         students_filtered_graph_filepath = GRAPHS_OUTPUT_PATH + str(year) + '_' + 'students_filtered_graph' + '.gexf'
-        students_filtered_graph = StudentsGraph(attemps_df, filtering_parameter).graph
+        students_filtered_graph = StudentsGraph.from_attemps(attemps_df, filtering_parameter).graph
         students_filtered_graph_communities = louvain_communities(students_filtered_graph, seed=42, weight='weight')
         students_filtered_graph_grouped_communities = group_singleton_communities(students_filtered_graph_communities)
         students_filtered_graph_modularity = modularity(students_filtered_graph, communities=students_filtered_graph_grouped_communities)
