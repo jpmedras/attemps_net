@@ -1,0 +1,10 @@
+strict digraph "O" {
+rankdir=LR;
+1 [size=2, neighborhood="['A', 'B']", shape=circle, style=filled, fillcolor=lightblue];
+2 [size=3, neighborhood="['A', 'B', 'C']", shape=circle, style=filled, fillcolor=lightblue];
+3 [size=2, neighborhood="['C', 'D']", shape=circle, style=filled, fillcolor=lightblue];
+1 -> 2 [weight=1.0];
+2 -> 1 [weight=0.6666666666666666];
+2 -> 3 [weight=0.3333333333333333];
+3 -> 2 [weight=0.5];
+}
