@@ -1,6 +1,6 @@
 # Characterization of Students Based on Solved Exercises and Social Networking Techniques
 
-A proposal based on data mining and social networks for characterizing students based on their solved exercises.
+A proposal based on data mining and social networks for characterizing students based on their attemps for solving exercises.
 
 ## Run
 
