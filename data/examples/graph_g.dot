@@ -1,0 +1,7 @@
+strict graph "G" {
+rankdir=BT;
+1 [size=2, neighborhood="['A', 'B']", shape=circle, style=filled, fillcolor=lightblue];
+2 [size=3, neighborhood="['A', 'B', 'C']", shape=circle, style=filled, fillcolor=lightblue];
+3 [size=2, neighborhood="['C', 'D']", shape=circle, style=filled, fillcolor=lightblue];
+1 -- 2 [weight=2, label=2];
+}

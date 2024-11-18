@@ -3,39 +3,34 @@ from .students_digraph import StudentsDiGraph
 from pandas import DataFrame
 
 class StudentsGraph(StudentsDiGraph):
-    def __init__(self, data: DataFrame, filtering_parameter: float = None) -> None:
+    def __init__(self, solving_df: DataFrame, filtering_parameter: float = None) -> None:
 
-        self.__digraph = StudentsDiGraph(data=data)
+        self.__digraph = StudentsDiGraph(solving_df=solving_df)
         
         if filtering_parameter is not None:
             self.__digraph = self.__digraph.filter(filtering_parameter)
 
         self.__graph = Graph()
+        self.__graph.name = 'G'
+
         self.__add_nodes()
         self.__add_edges()
 
-    @classmethod
-    def from_attemps(cls, attemps: DataFrame, filtering_parameter: float = None) -> 'StudentsGraph':
-        digraph = StudentsDiGraph.from_attemps(attemps=attemps)
-        return cls(data=digraph.solved, filtering_parameter=filtering_parameter)
-    
-    @property
-    def solved(self) -> DataFrame:
-        return self.__digraph.solved
-
     def __add_nodes(self) -> None:
-        for node, data in self.__digraph.graph.nodes(data=True):
-            self.__graph.add_node(node, **data)
+        self.__graph.add_nodes_from(self.__digraph.graph.nodes(data=True))
     
     def __add_edges(self) -> None:
-        for u in self.__digraph.graph:
-            for v in self.__digraph.graph:
+        for u, data_u in self.__digraph.graph.nodes(data=True):
+            for v, data_v in self.__digraph.graph.nodes(data=True):
 
                 if u == v:
                     continue
 
+                neighbors_u = set(data_u['neighborhood'])
+                neighbors_v = set(data_v['neighborhood'])
+
                 if self.__digraph.graph.has_edge(u, v) and self.__digraph.graph.has_edge(v, u):
-                    self.__graph.add_edge(u, v, weight=len(set(self.solved.loc[u, 'exercise_ids']) & set(self.solved.loc[v, 'exercise_ids'])))
+                    self.__graph.add_edge(u, v, weight=len(neighbors_u & neighbors_v))
 
     @property
     def graph(self) -> Graph:

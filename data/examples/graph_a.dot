@@ -1,0 +1,19 @@
+digraph "A" {
+rankdir=BT;
+1 [shape=circle, style=filled, fillcolor=lightblue];
+2 [shape=circle, style=filled, fillcolor=lightblue];
+3 [shape=circle, style=filled, fillcolor=lightblue];
+A [shape=rect, style=filled, fillcolor=lightyellow];
+C [shape=rect, style=filled, fillcolor=lightyellow];
+D [shape=rect, style=filled, fillcolor=lightyellow];
+B [shape=rect, style=filled, fillcolor=lightyellow];
+1 -> A [key=0, color=red, label=10];
+1 -> A [key=1, color=green, label=10];
+1 -> C [key=0, color=red, label=15];
+1 -> B [key=0, color=green, label=15];
+2 -> A [key=0, color=green, label=14];
+2 -> C [key=0, color=green, label=35];
+2 -> B [key=0, color=green, label=10];
+3 -> C [key=0, color=green, label=20];
+3 -> D [key=0, color=green, label=20];
+}

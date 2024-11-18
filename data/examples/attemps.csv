@@ -1,0 +1,10 @@
+timestamp,student_id,exercise_id,is_correct,spent_time
+10,1,A,False,10
+14,2,A,True,14
+20,3,C,True,20
+25,1,C,False,15
+35,1,A,True,10
+40,3,D,True,20
+49,2,C,True,35
+50,1,B,True,15
+59,2,B,True,10

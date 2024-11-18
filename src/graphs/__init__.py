@@ -1,2 +1,5 @@
 from .students_digraph import StudentsDiGraph
 from .students_graph import StudentsGraph
+from .attemps_multidigraph import AttempsMultiDiGraph
+from .graph_analysis import louvain_grouped_communities, filtering_parameter_analysis
+from .graph_attrs import add_graphic_attrs, add_community_attrs, add_student_attrs, add_exercise_attrs, add_edges_attrs

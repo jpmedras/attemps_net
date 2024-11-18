@@ -2,54 +2,43 @@ from networkx import DiGraph
 from pandas import DataFrame
 
 class StudentsDiGraph():
-    def __init__(self, data:DataFrame) -> None:
-
-        # if data.columns != ['student_id', 'exercise_ids']:
-        #     raise Exception('')
-        
-        self.__solved = data
+    def __init__(self, solving_df:DataFrame) -> None:
+        # check
+        # check_solving_df(solving_df):
+                
+        self.__solving_df = solving_df
 
         self.__graph = DiGraph()
+        self.__graph.name = 'O'
+
         self.__add_nodes()
         self.__add_edges()
-
-    @classmethod
-    def from_attemps(cls, attemps:DataFrame) -> 'StudentsDiGraph':
-        data = []
-        for student_id, group in attemps.groupby('student_id'):
-            data.append(
-                {
-                    'student_id': student_id,
-                    'exercise_ids': group.loc[group['is_correct'] == True, 'exercise_id'].unique().tolist()
-                }  
-            )
-
-        df = DataFrame(data)
-        df = df.set_index('student_id')
-
-        return cls(df)
     
     def __add_nodes(self) -> None:
-        for student_u, solved_exercise_ids in self.__solved.iterrows():
+        for student_u, group in self.__solving_df.groupby(level='student_id'):
             if not self.__graph.has_node(student_u):
-                self.__graph.add_node(student_u, size=len(solved_exercise_ids['exercise_ids']))
+                self.__graph.add_node(
+                    student_u,
+                    size=len(group),
+                    neighborhood=group.index.get_level_values('exercise_id').to_list()
+                )
     
     def __add_edges(self) -> None:
-        for u, neighbors_u in self.__solved.iterrows():
-            for v, neighbors_v in self.__solved.iterrows():
+        for u, data_u in self.__graph.nodes(data=True):
+            for v, data_v in self.__graph.nodes(data=True):
 
                 if u == v:
                     continue
 
-                if len(neighbors_u['exercise_ids']) > 0 and len(neighbors_v['exercise_ids']) > 0:
-                    overlap = len(set(neighbors_u['exercise_ids']) & set(neighbors_v['exercise_ids'])) / len(neighbors_u['exercise_ids'])
+                neighbors_u = set(data_u['neighborhood'])
+                neighbors_v = set(data_v['neighborhood'])
+
+                if len(neighbors_u) > 0 and len(neighbors_v) > 0:
+                    neighborhood_intersection = neighbors_u & neighbors_v
+                    overlap = len(neighborhood_intersection) / len(neighbors_u)
 
                     if overlap > 0:
                         self.__graph.add_edge(u, v, weight=overlap)
-
-    @property
-    def solved(self) -> DataFrame:
-        return self.__solved
 
     @property
     def graph(self) -> DiGraph:
