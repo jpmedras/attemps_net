@@ -32,6 +32,7 @@ if __name__ == '__main__':
         'year': [],
         'student_id': [],
         'community': [],
+        'edge_weights': [],
         'n_solved_exercises': [],
         'solved_exercise_ids': [],
         'solving_times': [],
@@ -116,6 +117,8 @@ if __name__ == '__main__':
                     community_id = idx
                     break
 
+            edge_weights = [data['weight'] for u, v, data in graph_g.edges(data=True) if (u == student_id or v == student_id)]
+
             solved_group = solving_df.loc[solving_df.index.get_level_values('student_id') == student_id]
             solved_exercise_ids = solved_group.index.get_level_values('exercise_id').unique().to_list()
             solving_times = solved_group['solving_time'].to_list()
@@ -129,6 +132,7 @@ if __name__ == '__main__':
             students_analysis_data['year'].append(year)
             students_analysis_data['student_id'].append(student_id)
             students_analysis_data['community'].append(community_id)
+            students_analysis_data['edge_weights'].append(edge_weights)
             students_analysis_data['n_solved_exercises'].append(len(solved_exercise_ids))
             students_analysis_data['solved_exercise_ids'].append(solved_exercise_ids)
             students_analysis_data['solving_times'].append(solving_times)

@@ -12,6 +12,10 @@ def caracterize_communities(student_analysis_df:DataFrame) -> DataFrame:
         'solved_exercise_ids': [],
         'mean_ns_solved_exercises': [],
         'std_ns_solved_exercises': [],
+        'mean_ns_students_solved_each_exercise': [],
+        'std_ns_students_solved_each_exercise': [],
+        'mean_means_edge_weights': [],
+        'std_means_edge_weights': [],
         'n_tried_exercises': [],
         'tried_exercise_ids': [],
         'mean_ns_tried_exercises': [],
@@ -43,8 +47,9 @@ def caracterize_communities(student_analysis_df:DataFrame) -> DataFrame:
             ns_students_with_solved_exercises = [len(exercise_ids) for exercise_ids in group['solved_exercise_ids'] if len(exercise_ids) > 0]
             data["n_students_with_solved_exercises"].append(len(ns_students_with_solved_exercises))
 
-            # IDs dos exercícios resolvidos dos estudantes da comunidade
-            solved_exercise_ids = list(set([exercise_id for exercise_ids in group['solved_exercise_ids'] for exercise_id in exercise_ids]))
+            # IDs dos exercícios resolvidos de todos os estudantes da comunidade 
+            solved_exercise_ids_all = [exercise_id for exercise_ids in group['solved_exercise_ids'] for exercise_id in exercise_ids]
+            solved_exercise_ids = list(set(solved_exercise_ids_all))
             data["n_solved_exercises"].append(len(solved_exercise_ids))
             data["solved_exercise_ids"].append(solved_exercise_ids)
 
@@ -52,6 +57,16 @@ def caracterize_communities(student_analysis_df:DataFrame) -> DataFrame:
             ns_solved_exercises = [len(exercise_ids) for exercise_ids in group['solved_exercise_ids']]
             data["mean_ns_solved_exercises"].append(mean(ns_solved_exercises))
             data["std_ns_solved_exercises"].append(std(ns_solved_exercises))
+
+            # Números de estudantes que resolveram cada exercício
+            ns_students_solved_each_exercise = [solved_exercise_ids_all.count(exercise_id) for exercise_id in solved_exercise_ids]
+            data["mean_ns_students_solved_each_exercise"].append(mean(ns_students_solved_each_exercise))
+            data["std_ns_students_solved_each_exercise"].append(std(ns_students_solved_each_exercise))
+            
+            # Médias dos pesos das arestas de cada um dos estudantes da comunidade
+            means_edge_weights = [mean(edge_weights) if len(edge_weights) > 0 else 0 for edge_weights in group['edge_weights'].to_list()]
+            data["mean_means_edge_weights"].append(mean(means_edge_weights))
+            data["std_means_edge_weights"].append(std(means_edge_weights))
 
             # IDs dos exercícios tentados dos estudantes da comunidade
             tried_exercise_ids = list(set([exercise_id for exercise_ids in group['tried_exercise_ids'] for exercise_id in exercise_ids]))

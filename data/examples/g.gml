@@ -1,7 +1,7 @@
 graph [
   name "G"
   graph [
-    rankdir "BT"
+    rankdir "LR"
   ]
   node [
     id 0

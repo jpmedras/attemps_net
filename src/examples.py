@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     print("Graph G:")
     graph_g = StudentsGraph(solving_df=solving_df, filtering_parameter=0.5)
-    add_graphic_attrs(graph_g.graph)
+    add_graphic_attrs(graph_g.graph, 'LR')
     add_student_attrs(graph_g.graph, graph_g.graph.nodes)
     add_edges_attrs(graph=graph_g.graph)
     write_dot(graph_g.graph, PATH + 'graph_g.dot')
