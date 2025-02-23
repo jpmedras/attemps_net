@@ -1,31 +1,66 @@
-# Characterization of Students Based on Solved Exercises and Social Networking Techniques
+# Caracterização de Grupos de Estudantes de Programação: Uma Abordagem Baseada em Modelagem de Redes
 
-A proposal based on data mining and social networks for characterizing students based on their attemps for solving exercises.
+Uma proposta baseada em mineração de dados e redes sociais para caracterizar alunos com base em suas tentativas de resolução de exercícios.
 
-## Run
+## Resultados
 
-```bash
+|Ano |Comunidade|# Est.|Ex. Res.        |Tent.            |Peso M. das Ar. |Tempos M. de Res.|
+|----|----------|------|----------------|-----------------|----------------|-----------------|
+|2018|A         |23    |23,04 (+/- 3,70)|45,17 (+/- 17,44)|18,44 (+/- 3,09)|25,52 (+/- 5,22) |
+|2018|B         |14    |37,14 (+/- 5,04)|55,14 (+/- 8,41) |29,72 (+/- 3,52)|17,27 (+/- 3,74) |
+|2018|C (s. c.) |12    |5,92 (+/- 5,11) |12,25 (+/- 9,63) |0,00 (+/- 0,00) |32,10 (+/- 13,72)|
+|2018|D         |4     |13,25 (+/- 1,48)|22,00 (+/- 2,55) |11,16 (+/- 1,08)|27,17 (+/- 10,11)|
+|2018|E         |2     |10,00 (+/- 0,00)|28,00 (+/- 2,00) |8,00 (+/- 0,00) |38,19 (+/- 0,95) |
+|2018|F         |2     |4,00 (+/- 0,00) |13,50 (+/- 2,50) |3,00 (+/- 0,00) |30,17 (+/- 3,26) |
+|2019|A         |22    |27,41 (+/- 2,44)|46,91 (+/- 9,80) |22,94 (+/- 1,98)|21,48 (+/- 3,72) |
+|2019|B         |15    |40,87 (+/- 4,83)|59,27 (+/- 7,06) |33,65 (+/- 3,52)|16,17 (+/- 3,85) |
+|2019|C (s. c.) |9     |10,67 (+/- 4,08)|20,11 (+/- 7,64) |0,00 (+/- 0,00) |31,98 (+/- 14,66)|
+|2019|D         |8     |17,38 (+/- 3,00)|32,88 (+/- 18,06)|14,15 (+/- 1,87)|32,59 (+/- 9,00) |
+|2019|E         |3     |10,67 (+/- 0,47)|21,00 (+/- 2,94) |8,00 (+/- 0,00) |27,31 (+/- 6,35) |
+|2019|F         |2     |16,00 (+/- 1,00)|29,00 (+/- 3,00) |12,00 (+/- 0,00)|29,95 (+/- 3,95) |
+|2021|A         |13    |42,62 (+/- 3,75)|68,38 (+/- 17,74)|36,57 (+/- 2,65)|16,31 (+/- 2,64) |
+|2021|B         |11    |27,18 (+/- 9,23)|46,36 (+/- 15,60)|23,40 (+/- 8,10)|19,50 (+/- 4,94) |
+|2021|C (s. c.) |11    |12,00 (+/- 6,38)|26,36 (+/- 10,40)|0,00 (+/- 0,00) |32,09 (+/- 11,42)|
+|2021|D         |4     |3,75 (+/- 2,17) |7,75 (+/- 4,32)  |3,00 (+/- 1,73) |42,17 (+/- 7,24) |
+|2021|E         |3     |11,00 (+/- 0,82)|20,67 (+/- 2,87) |9,00 (+/- 0,00) |21,59 (+/- 5,11) |
+|2021|F         |2     |17,00 (+/- 0,00)|35,00 (+/- 0,00) |12,00 (+/- 0,00)|29,14 (+/- 3,98) |
+|2021|G         |2     |3,50 (+/- 0,50) |10,50 (+/- 5,50) |3,00 (+/- 0,00) |27,84 (+/- 1,37) |
+|2022|A         |16    |21,81 (+/- 2,58)|33,75 (+/- 6,98) |17,89 (+/- 2,21)|27,53 (+/- 4,89) |
+|2022|B         |15    |40,73 (+/- 4,20)|61,53 (+/- 12,99)|34,68 (+/- 3,07)|16,06 (+/- 2,42) |
+|2022|C (s. c.) |11    |12,18 (+/- 5,84)|21,91 (+/- 11,97)|0,00 (+/- 0,00) |28,75 (+/- 12,01)|
+|2022|D         |10    |30,60 (+/- 1,96)|43,30 (+/- 3,74) |26,45 (+/- 2,32)|21,37 (+/- 2,46) |
+|2023|A         |14    |44,93 (+/- 4,04)|62,86 (+/- 7,08) |39,53 (+/- 2,94)|14,48 (+/- 2,55) |
+|2023|B         |14    |23,71 (+/- 6,92)|38,93 (+/- 11,68)|19,84 (+/- 5,83)|21,42 (+/- 4,05) |
+|2023|C (s. c.) |13    |11,69 (+/- 7,19)|23,31 (+/- 10,73)|0,00 (+/- 0,00) |38,75 (+/- 19,47)|
+|2023|D         |11    |34,82 (+/- 2,44)|58,73 (+/- 8,20) |30,25 (+/- 2,70)|19,02 (+/- 2,78) |
+|2023|E         |4     |15,75 (+/- 0,83)|26,25 (+/- 5,72) |12,63 (+/- 0,41)|35,32 (+/- 2,50) |
+|2023|F         |2     |30,50 (+/- 1,50)|44,00 (+/- 4,00) |25,67 (+/- 1,67)|15,43 (+/- 4,63) |
+|2023|G         |2     |7,50 (+/- 0,50) |17,00 (+/- 4,00) |6,00 (+/- 0,00) |40,70 (+/- 3,74) |
+
+## Execução
+
+```
 python3 -m venv .env
 source .env/bin/activate
 python3 -m pip install -r requirements.txt
 python3 src/experiment.py
 ```
 
-### Data Analysis
+### Análise dos dados
 
-Some data analysis metrics can be computed with:
-```bash
+Algumas métricas de análise de dados podem ser calculadas com:
+```
 python3 src/data_analysis.py
 ```
 
 ### Examples
 
-Some examples can be seen in `data/examples/` directory. The DOT files and images can be generated with:
-```bash
+Alguns exemplos podem ser vistos no diretório `data/examples/`. Os arquivos DOT e imagens podem ser gerados com:
+```
 python3 src/examples.py
 ```
 
-The DOT files can be converted to images with:
-```bash
+Os arquivos DOT podem ser convertidos em imagens com:
+```
 dot -Tpng [dot_filename].dot -o [image_filename].png
 ```
