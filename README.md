@@ -54,9 +54,9 @@ Algumas métricas de análise de dados podem ser calculadas com:
 python3 src/data_analysis.py
 ```
 
-### Examples
+### Exemplos
 
-Alguns exemplos podem ser vistos no diretório `data/examples/`. Os arquivos DOT e imagens podem ser gerados com:
+Alguns exemplos podem ser vistos no diretório `data/examples/`. Os arquivos DOT e tabelas podem ser gerados com:
 
 ```
 python3 src/examples.py
