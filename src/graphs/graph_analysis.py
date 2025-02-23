@@ -5,6 +5,7 @@ from .students_graph import StudentsGraph
 from networkx.algorithms.community import louvain_communities, modularity
 from typing import List, Set
 
+# TODO: Mudar retorno para algo como List[Set[int]], int (adicionar `singleton_community_id`) 
 def louvain_grouped_communities(graph:Graph, weight) -> List[Set[int]]:
     if len(graph.edges) == 0:
         communities = [set(graph.nodes),]
@@ -19,11 +20,13 @@ def louvain_grouped_communities(graph:Graph, weight) -> List[Set[int]]:
             singleton_community.update(community)
         else:
             new_communities.append(community)
-
+    
+    singleton_community_idx = None
     if len(singleton_community) > 0:
+        singleton_community_idx = len(new_communities)
         new_communities = new_communities + [singleton_community]
 
-    return new_communities
+    return new_communities, singleton_community_idx
 
 def filtering_parameter_analysis(solving_df:DataFrame, step=0.05):
 
@@ -39,7 +42,7 @@ def filtering_parameter_analysis(solving_df:DataFrame, step=0.05):
 
         n_students = len(solving_df.index.get_level_values('student_id').unique())
 
-        graph_communities = louvain_grouped_communities(graph=graph, weight='weight')
+        graph_communities, pseudocommunity_idx = louvain_grouped_communities(graph=graph, weight='weight')
         if len(graph.edges) == 0:
             graph_modularity = None
         else:

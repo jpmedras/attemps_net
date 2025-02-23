@@ -77,7 +77,7 @@ if __name__ == "__main__":
     filtering_df = filtering_parameter_analysis(solving_df=solving_df, step=0.1)
     print(filtering_df)
 
-    communities = louvain_grouped_communities(graph_g.graph, weight='weight')
+    communities, pseudocommunity_idx = louvain_grouped_communities(graph_g.graph, weight='weight')
     add_community_attrs(graph=graph_g.graph, communities=communities)
     
     write_gml(graph_g.graph, PATH + 'g.gml')

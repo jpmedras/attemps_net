@@ -5,6 +5,8 @@ def caracterize_communities(student_analysis_df:DataFrame) -> DataFrame:
     data = {
         'year': [],
         'community': [],
+        'community_letter': [],
+        'is_pseudocommunity': [],
         'n_students': [],
         'student_ids': [],
         'n_students_with_solved_exercises': [],
@@ -37,6 +39,16 @@ def caracterize_communities(student_analysis_df:DataFrame) -> DataFrame:
             data["year"].append(year)
             
             data["community"].append(name)
+
+            assert group["community_letter"].nunique() == 1, "Community with more then one letter"
+            data["community_letter"].append(group["community_letter"].iloc[0])
+
+            assert group["in_pseudocommunity"].nunique() == 1, "Community is undefined in the pseudocommunity column"
+            if group["in_pseudocommunity"].iloc[0] == True:
+                is_pseudocommunity = True
+            else:
+                is_pseudocommunity = False
+            data["is_pseudocommunity"].append(is_pseudocommunity)
 
             # IDs dos estudantes da comunidade
             student_ids = group.index.get_level_values('student_id').unique().to_list()
@@ -109,6 +121,7 @@ def caracterize_communities(student_analysis_df:DataFrame) -> DataFrame:
                 data["std_mean_solving_times"].append(None)
 
     df = DataFrame(data)
-    df = df.set_index(['year', 'community'])
+    df = df.set_index(['year', 'community_letter'])
+    df = df.sort_index()
 
     return df

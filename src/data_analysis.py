@@ -15,6 +15,7 @@ if __name__ == "__main__":
         'n_students': [],
         'n_exercises': [],
         'n_attemps': [],
+        'n_correct_attemps': [],
     }
 
     exercise_metrics_data = {
@@ -23,7 +24,7 @@ if __name__ == "__main__":
         'n_students': [],
         'percentage_students': []
     }
-
+    
     for year in YEARS:
         attemps_filepath = INPUT_PATH + 'attemps' + '_' + str(year) + '.csv'
         attemps_df = read_csv(attemps_filepath)
@@ -31,6 +32,7 @@ if __name__ == "__main__":
         n_students = len(attemps_df['student_id'].unique().tolist())
         n_exercises = len(attemps_df['exercise_id'].unique().tolist())
         n_attemps = len(attemps_df)
+        n_correct_attemps = len(attemps_df[attemps_df['is_correct'] == True])
 
         solving_df = attemps_to_solving(attemps_df)
 
@@ -40,6 +42,8 @@ if __name__ == "__main__":
         attemps_metrics_data['n_students'].append(n_students)
         attemps_metrics_data['n_exercises'].append(n_exercises)
         attemps_metrics_data['n_attemps'].append(n_attemps)
+        attemps_metrics_data['n_correct_attemps'].append(n_correct_attemps)
+
 
         # Salvando métricas dos exercícios
 
