@@ -1,8 +1,8 @@
-# Characterization of Students Based on Solved Exercises and Social Networking Techniques
+# Caracterização de Grupos de Estudantes de Programação: Uma Abordagem Baseada em Modelagem de Redes
 
-A proposal based on data mining and social networks for characterizing students based on their attemps for solving exercises.
+Uma proposta baseada em mineração de dados e redes sociais para caracterizar alunos com base em suas tentativas de resolução de exercícios.
 
-## Results
+## Resultados
 
 |Ano |Comunidade|# Est.|Ex. Res.        |Tent.            |Peso M. das Ar. |Tempos M. de Res.|
 |----|----------|------|----------------|-----------------|----------------|-----------------|
@@ -37,8 +37,7 @@ A proposal based on data mining and social networks for characterizing students 
 |2023|F         |2     |30,50 (+/- 1,50)|44,00 (+/- 4,00) |25,67 (+/- 1,67)|15,43 (+/- 4,63) |
 |2023|G         |2     |7,50 (+/- 0,50) |17,00 (+/- 4,00) |6,00 (+/- 0,00) |40,70 (+/- 3,74) |
 
-
-## Run
+## Execução
 
 ```
 python3 -m venv .env
@@ -47,21 +46,21 @@ python3 -m pip install -r requirements.txt
 python3 src/experiment.py
 ```
 
-### Data Analysis
+### Análise dos dados
 
-Some data analysis metrics can be computed with:
+Algumas métricas de análise de dados podem ser calculadas com:
 ```
 python3 src/data_analysis.py
 ```
 
 ### Examples
 
-Some examples can be seen in `data/examples/` directory. The DOT files and images can be generated with:
+Alguns exemplos podem ser vistos no diretório `data/examples/`. Os arquivos DOT e imagens podem ser gerados com:
 ```
 python3 src/examples.py
 ```
 
-The DOT files can be converted to images with:
+Os arquivos DOT podem ser convertidos em imagens com:
 ```
 dot -Tpng [dot_filename].dot -o [image_filename].png
 ```
