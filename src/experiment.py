@@ -1,4 +1,4 @@
-from graphs import AttempsMultiDiGraph, StudentsGraph
+from graphs import AttempsMultiGraph, StudentsGraph
 from graphs import louvain_grouped_communities, filtering_parameter_analysis
 from graphs import add_community_attrs
 from analysis import attemps_to_solving, attemps_to_trying
@@ -182,7 +182,7 @@ if __name__ == '__main__':
 
         # Criando grafo A
 
-        graph_a = AttempsMultiDiGraph(attemps_df=attemps_df).graph
+        graph_a = AttempsMultiGraph(attemps_df=attemps_df).graph
 
         # Criando grafo S
 

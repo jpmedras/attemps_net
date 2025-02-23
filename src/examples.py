@@ -1,6 +1,6 @@
 from pandas import read_csv
 from analysis import attemps_to_solving, attemps_to_trying
-from graphs import AttempsMultiDiGraph, StudentsDiGraph, StudentsGraph
+from graphs import AttempsMultiGraph, StudentsDiGraph, StudentsGraph
 from networkx.drawing.nx_pydot import write_dot
 from networkx import write_gml
 from graphs import louvain_grouped_communities, filtering_parameter_analysis
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     trying_df.to_csv(trying_filepath, decimal=',')
     print(trying_df)
 
-    graph_a = AttempsMultiDiGraph(attemps_df=attemps_df)
+    graph_a = AttempsMultiGraph(attemps_df=attemps_df)
     add_graphic_attrs(graph_a.graph)
     add_student_attrs(graph_a.graph, attemps_df['student_id'].unique())
     add_exercise_attrs(graph_a.graph, attemps_df['exercise_id'].unique())

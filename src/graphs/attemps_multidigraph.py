@@ -1,11 +1,11 @@
-from networkx import MultiDiGraph
+from networkx import MultiGraph
 from pandas import DataFrame
 
-class AttempsMultiDiGraph():
+class AttempsMultiGraph():
     def __init__(self, attemps_df:DataFrame) -> None:        
         self.__attemps_df = attemps_df
 
-        self.__graph = MultiDiGraph()
+        self.__graph = MultiGraph()
         self.__graph.name = 'A'
         
         self.__add_nodes()
@@ -31,5 +31,5 @@ class AttempsMultiDiGraph():
             )
 
     @property
-    def graph(self) -> MultiDiGraph:
+    def graph(self) -> MultiGraph:
         return self.__graph

@@ -49,6 +49,7 @@ python3 src/experiment.py
 ### Análise dos dados
 
 Algumas métricas de análise de dados podem ser calculadas com:
+
 ```
 python3 src/data_analysis.py
 ```
@@ -56,11 +57,13 @@ python3 src/data_analysis.py
 ### Examples
 
 Alguns exemplos podem ser vistos no diretório `data/examples/`. Os arquivos DOT e imagens podem ser gerados com:
+
 ```
 python3 src/examples.py
 ```
 
 Os arquivos DOT podem ser convertidos em imagens com:
+
 ```
 dot -Tpng [dot_filename].dot -o [image_filename].png
 ```
